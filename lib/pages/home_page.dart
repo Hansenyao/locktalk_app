@@ -1,27 +1,16 @@
-import 'package:locktalk_app/pages/app_state.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, required this.authAppState});
+  const HomePage({super.key, required this.loginUser});
 
-  final ApplicationState authAppState;
+  final User loginUser;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: ListenableBuilder(
-          listenable: authAppState,
-          builder: (context, _) {
-            return ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/sign-in');
-              },
-              child: Text('go to sign in'),
-            );
-          },
-        ),
-      ),
+      appBar: AppBar(title: Text('Message')),
+      body: Center(child: Text("Login user: ${loginUser.displayName}")),
     );
   }
 }
