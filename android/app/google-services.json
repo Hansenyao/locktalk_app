@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "863951779542",
+    "project_id": "locktalk-app",
+    "storage_bucket": "locktalk-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863951779542:android:9cf92f3b8284ea899dfb77",
+        "android_client_info": {
+          "package_name": "com.dmit2504.locktalk"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChanD8b8ly9U66i9l2uU0eg-IWPO8rN84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863951779542:android:73b238155e0294d09dfb77",
+        "android_client_info": {
+          "package_name": "com.example.locktalk_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyChanD8b8ly9U66i9l2uU0eg-IWPO8rN84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

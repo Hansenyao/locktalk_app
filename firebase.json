@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"locktalk-app","appId":"1:863951779542:android:73b238155e0294d09dfb77","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"locktalk-app","configurations":{"android":"1:863951779542:android:73b238155e0294d09dfb77","ios":"1:863951779542:ios:a5e6bb40453aa0939dfb77"}}}}}}
