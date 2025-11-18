@@ -4,7 +4,6 @@ import 'package:locktalk_app/pages/routes.dart' as routes;
 import 'package:locktalk_app/pages/app_state.dart';
 import 'package:locktalk_app/pages/home_page.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'firebase_options.dart';
 
 void main() async {
