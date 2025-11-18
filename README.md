@@ -1,2 +1,3 @@
-# locktalk
-A mobile App for chat with encryption
+# locktalk_app
+
+A new Flutter project.
