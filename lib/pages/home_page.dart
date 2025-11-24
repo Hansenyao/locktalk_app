@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:locktalk_app/pages/profile_page.dart';
+import 'package:locktalk_app/widgets/contact_view.dart';
+import 'package:locktalk_app/widgets/message_view.dart';
+import 'package:locktalk_app/widgets/profile_view.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.user});
@@ -14,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   late final List<String> _titles;
-  late final List<Widget> _pages;
+  late final List<Widget> _views;
 
   @override
   void initState() {
@@ -22,10 +24,10 @@ class _HomePageState extends State<HomePage> {
 
     _titles = ["Contact", "Messages", "Profile"];
 
-    _pages = [
-      Center(child: Text("Contact Page")),
-      Center(child: Text("Messages Page")),
-      Center(child: ProfilePage(user: widget.user)),
+    _views = [
+      ContactView(user: widget.user),
+      MessageView(user: widget.user),
+      ProfileView(user: widget.user),
     ];
   }
 
@@ -33,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(_titles[_currentIndex]), centerTitle: true),
-      body: _pages[_currentIndex],
+      body: _views[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
