@@ -27,7 +27,7 @@ class MainApp extends StatelessWidget {
       routes: {
         routes.homeRoute: (context) =>
             (appState.isLongIn && appState.user != null)
-            ? HomePage(loginUser: appState.user!)
+            ? HomePage(user: appState.user!)
             : LoginPage(),
         routes.loginRoute: (context) => LoginPage(),
       },
