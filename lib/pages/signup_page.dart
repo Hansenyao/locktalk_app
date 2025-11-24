@@ -32,8 +32,8 @@ class _SignupPageState extends State<SignupPage> {
     if (_formKey.currentState!.validate()) {
       try {
         // Create keypair for user
-        var keyPair = generateFromSeed(_pinController.text);
-        var pubBase64 = convertPublicKeyToBase64(keyPair.publicKey);
+        var keyPair = KeyPair.generateFromSeed(_pinController.text);
+        var pubBase64 = keyPair.getPublicKey();
         print('Public Key: $pubBase64');
 
         // Register account on firebase
@@ -45,6 +45,7 @@ class _SignupPageState extends State<SignupPage> {
 
         // Success or failed
         if (user != null) {
+          // TODO: Save User information to Firestore
           Navigator.pushReplacementNamed(context, routes.homeRoute);
         } else {
           showError(context, "Sign up failed. Try again.");
