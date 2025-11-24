@@ -37,7 +37,15 @@ class ApplicationState extends ChangeNotifier {
       if (user != null) {
         _loggedIn = true;
         this.user = user;
-        // Every time the user changes (most importantly on login)
+
+        // Update user display name
+        if ((user.displayName ?? '').isEmpty) {
+          user.updateDisplayName(user.email!.split('@').first).then((_) {
+            user!.reload().then((_) {
+              user = FirebaseAuth.instance.currentUser;
+            });
+          });
+        }
       } else {
         _loggedIn = false;
       }

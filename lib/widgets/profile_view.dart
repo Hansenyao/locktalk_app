@@ -10,8 +10,8 @@ class ProfileView extends StatelessWidget {
     // Current user logout
     await FirebaseAuth.instance.signOut();
 
-    // Clear the navigation stack and jump to login page
-    Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    // Clear the navigation stack and jump to sign in page
+    Navigator.pushNamedAndRemoveUntil(context, '/signin', (route) => false);
   }
 
   @override

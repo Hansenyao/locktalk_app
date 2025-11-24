@@ -25,7 +25,7 @@ class LoginPage extends StatelessWidget {
             user.updateDisplayName(user.email!.split('@').first);
           }
 
-          // Clear the navigation stack and (can't go back to login page),
+          // Clear the navigation stack and (can't go back to sign in page),
           // and go to the home page
           Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
         }),

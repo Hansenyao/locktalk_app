@@ -1,2 +1,3 @@
 const homeRoute = '/';
-const loginRoute = '/login';
+const signInRoute = '/signin';
+const signUpRoute = '/signup';
