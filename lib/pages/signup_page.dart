@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:locktalk_app/crypto/ecc.dart';
 import 'package:locktalk_app/pages/routes.dart' as routes;
 import 'package:locktalk_app/firebase_functions.dart';
 
@@ -30,12 +31,19 @@ class _SignupPageState extends State<SignupPage> {
   void handleSignUp(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
+        // Create keypair for user
+        var keyPair = generateFromSeed(_pinController.text);
+        var pubBase64 = convertPublicKeyToBase64(keyPair.publicKey);
+        print('Public Key: $pubBase64');
+
+        // Register account on firebase
         User? user = await signUp(
           _emailController.text,
           _passwordController.text,
         );
         if (!mounted) return;
 
+        // Success or failed
         if (user != null) {
           Navigator.pushReplacementNamed(context, routes.homeRoute);
         } else {
