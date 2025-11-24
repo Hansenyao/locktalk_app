@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:locktalk_app/widgets/bottom_nav_bar.dart';
 import 'package:locktalk_app/widgets/contact_view.dart';
 import 'package:locktalk_app/widgets/message_view.dart';
 import 'package:locktalk_app/widgets/profile_view.dart';
@@ -36,27 +37,13 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(title: Text(_titles[_currentIndex]), centerTitle: true),
       body: _views[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: BottomNavBar(
         currentIndex: _currentIndex,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.people, color: Colors.green),
-            label: "Contact",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message, color: Colors.green),
-            label: "Messages",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person, color: Colors.green),
-            label: "Me",
-          ),
-        ],
       ),
     );
   }
