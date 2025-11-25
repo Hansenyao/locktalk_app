@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:locktalk_app/models/contact.dart';
 import 'package:locktalk_app/pages/app_state.dart';
+import 'package:locktalk_app/pages/chat_page.dart';
 
 class ContactView extends StatelessWidget {
   const ContactView({super.key});
@@ -41,7 +42,10 @@ class ContactView extends StatelessWidget {
           subtitle: Text(contact.email),
           trailing: const Icon(Icons.chevron_right),
           onTap: () {
-            /// TODO: Open message edit page with the selected contact
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatPage(peer: contact)),
+            );
           },
         );
       },
