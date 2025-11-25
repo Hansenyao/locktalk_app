@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locktalk_app/crypto/ecc.dart';
+import 'package:locktalk_app/models/contact.dart';
 import 'package:locktalk_app/pages/routes.dart' as routes;
 import 'package:locktalk_app/firebase_functions.dart';
+import 'package:locktalk_app/pages/app_state.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+  const SignupPage({super.key, required this.appState});
+
+  final ApplicationState appState;
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -34,7 +38,6 @@ class _SignupPageState extends State<SignupPage> {
         // Create keypair for user
         var keyPair = KeyPair.generateFromSeed(_pinController.text);
         var pubBase64 = keyPair.getPublicKey();
-        print('Public Key: $pubBase64');
 
         // Register account on firebase
         User? user = await signUp(
@@ -45,7 +48,16 @@ class _SignupPageState extends State<SignupPage> {
 
         // Success or failed
         if (user != null) {
-          // TODO: Save User information to Firestore
+          // Add new user to firebase
+          var newContact = Contact(
+            userId: user.uid,
+            name: user.displayName!,
+            email: user.email!,
+            pubkey: pubBase64,
+          );
+          widget.appState.addContact(newContact);
+
+          // Navigate to home page
           Navigator.pushReplacementNamed(context, routes.homeRoute);
         } else {
           showError(context, "Sign up failed. Try again.");

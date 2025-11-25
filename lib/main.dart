@@ -31,7 +31,7 @@ class MainApp extends StatelessWidget {
             ? HomePage(user: appState.user!)
             : SigninPage(),
         routes.signInRoute: (context) => SigninPage(),
-        routes.signUpRoute: (context) => SignupPage(),
+        routes.signUpRoute: (context) => SignupPage(appState: appState),
       },
     );
   }

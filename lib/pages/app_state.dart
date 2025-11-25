@@ -1,4 +1,5 @@
 import 'package:locktalk_app/firebase_options.dart';
+import 'package:locktalk_app/models/contact.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,6 +23,23 @@ class ApplicationState extends ChangeNotifier {
     _user = user;
   }
 
+  List<Contact>? _contacts;
+  List<Contact>? get contacts => _contacts;
+
+  void getContacts() {
+    FirebaseFirestore.instance.collection('/contacts/').get().then((
+      collectionSnapshot,
+    ) {
+      _contacts = collectionSnapshot.docs
+          .map((doc) => Contact.fromFirestore(doc))
+          .toList();
+    });
+  }
+
+  void addContact(contact) {
+    FirebaseFirestore.instance.collection('/contacts/').add(contact.toMap());
+  }
+
   void init() async {
     // Connect to firebase
     await Firebase.initializeApp(
@@ -37,15 +55,6 @@ class ApplicationState extends ChangeNotifier {
       if (user != null) {
         _loggedIn = true;
         this.user = user;
-
-        // Update user display name
-        if ((user.displayName ?? '').isEmpty) {
-          user.updateDisplayName(user.email!.split('@').first).then((_) {
-            user!.reload().then((_) {
-              user = FirebaseAuth.instance.currentUser;
-            });
-          });
-        }
       } else {
         _loggedIn = false;
       }

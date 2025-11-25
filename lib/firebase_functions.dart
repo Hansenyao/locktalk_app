@@ -6,6 +6,15 @@ Future<User?> signUp(String email, String password) async {
         .createUserWithEmailAndPassword(email: email, password: password);
 
     User? user = userCredential.user;
+
+    // Get display name from email
+    if ((user?.displayName ?? '').isEmpty) {
+      await user?.updateDisplayName(user.email!.split('@').first);
+      await user?.reload();
+
+      // Must get user from Firebase again, otherwise displayName is null still
+      user = FirebaseAuth.instance.currentUser;
+    }
     return user;
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
