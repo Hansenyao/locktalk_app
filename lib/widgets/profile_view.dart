@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:locktalk_app/pages/app_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class ProfileView extends StatelessWidget {
-  const ProfileView({super.key, required this.user});
-
-  final User user;
+  const ProfileView({super.key});
 
   Future<void> _logout(BuildContext context) async {
     // Current user logout
@@ -16,6 +16,8 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.read<ApplicationState>();
+
     return Container(
       alignment: Alignment.topCenter,
       child: Column(
@@ -25,9 +27,9 @@ class ProfileView extends StatelessWidget {
             margin: EdgeInsets.only(top: 200, bottom: 10),
             child: Column(
               children: [
-                Text(user.displayName ?? "Unknown Name"),
+                Text(appState.user?.displayName ?? "Unknown Name"),
                 SizedBox(height: 20),
-                Text(user.email ?? "Unknown Email"),
+                Text(appState.user?.email ?? "Unknown Email"),
               ],
             ),
           ),

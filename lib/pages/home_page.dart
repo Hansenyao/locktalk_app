@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locktalk_app/widgets/bottom_nav_bar.dart';
 import 'package:locktalk_app/widgets/contact_view.dart';
 import 'package:locktalk_app/widgets/message_view.dart';
 import 'package:locktalk_app/widgets/profile_view.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.user});
-
-  final User user;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -23,13 +20,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
+    // Bottom nav bar options and views
     _titles = ["Contact", "Messages", "Profile"];
-
-    _views = [
-      ContactView(user: widget.user),
-      MessageView(user: widget.user),
-      ProfileView(user: widget.user),
-    ];
+    _views = [ContactView(), MessageView(), ProfileView()];
   }
 
   @override

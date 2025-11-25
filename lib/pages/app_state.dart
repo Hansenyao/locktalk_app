@@ -10,6 +10,8 @@ class ApplicationState extends ChangeNotifier {
   ApplicationState() {
     init();
   }
+  bool _initialized = false;
+  bool get isInitialized => _initialized;
 
   bool _loggedIn = false;
   bool get isLongIn => _loggedIn;
@@ -25,19 +27,37 @@ class ApplicationState extends ChangeNotifier {
 
   List<Contact>? _contacts;
   List<Contact>? get contacts => _contacts;
-
-  void getContacts() {
-    FirebaseFirestore.instance.collection('/contacts/').get().then((
-      collectionSnapshot,
-    ) {
-      _contacts = collectionSnapshot.docs
-          .map((doc) => Contact.fromFirestore(doc))
-          .toList();
-    });
-  }
+  bool _contactsLoading = false;
+  bool get contactsLoading => _contactsLoading;
 
   void addContact(contact) {
     FirebaseFirestore.instance.collection('/contacts/').add(contact.toMap());
+  }
+
+  Future<List<Contact>> getContacts() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('/contacts/')
+        .get();
+
+    final contacts = snapshot.docs
+        .map((doc) => Contact.fromFirestore(doc))
+        .toList();
+
+    return contacts;
+  }
+
+  void _fetchContacts() async {
+    _contactsLoading = true;
+    notifyListeners();
+
+    final snapshot = await FirebaseFirestore.instance
+        .collection('/contacts/')
+        .get();
+
+    _contacts = snapshot.docs.map((doc) => Contact.fromFirestore(doc)).toList();
+
+    _contactsLoading = false;
+    notifyListeners();
   }
 
   void init() async {
@@ -55,10 +75,16 @@ class ApplicationState extends ChangeNotifier {
       if (user != null) {
         _loggedIn = true;
         this.user = user;
+
+        _fetchContacts();
       } else {
         _loggedIn = false;
       }
-      //Notifica
+
+      if (!_initialized) {
+        _initialized = true;
+      }
+      //Notification
       notifyListeners();
     });
   }
