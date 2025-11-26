@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
@@ -10,6 +11,22 @@ class KeyPair {
   KeyPair._internal(ECPrivateKey privateKey, ECPublicKey publicKey) {
     _privateKey = privateKey;
     _publicKey = publicKey;
+  }
+
+  // Create a keypair
+  factory KeyPair.generate() {
+    // Generate 16 bytes random number
+    final r = Random.secure();
+    final seed = Uint8List.fromList(
+      List<int>.generate(16, (_) => r.nextInt(128)),
+    );
+
+    // Convert to hex string as the seed
+    final StringBuffer buffer = StringBuffer();
+    for (final b in seed) {
+      buffer.write(b.toRadixString(16).padLeft(2, '0'));
+    }
+    return KeyPair.generateFromSeed(buffer.toString());
   }
 
   // Create a keypair from seed

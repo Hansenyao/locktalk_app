@@ -39,9 +39,7 @@ class ApplicationState extends ChangeNotifier {
         .collection('/contacts/')
         .get();
 
-    final contacts = snapshot.docs
-        .map((doc) => Contact.fromFirestore(doc))
-        .toList();
+    final contacts = snapshot.docs.map((doc) => Contact.fromMap(doc)).toList();
 
     return contacts;
   }
@@ -54,7 +52,7 @@ class ApplicationState extends ChangeNotifier {
         .collection('/contacts/')
         .get();
 
-    _contacts = snapshot.docs.map((doc) => Contact.fromFirestore(doc)).toList();
+    _contacts = snapshot.docs.map((doc) => Contact.fromMap(doc)).toList();
 
     _contactsLoading = false;
     notifyListeners();

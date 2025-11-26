@@ -16,9 +16,7 @@ class Contact {
     required this.pubkey,
   });
 
-  factory Contact.fromFirestore(
-    DocumentSnapshot<Map<String, dynamic>> snapshot,
-  ) {
+  factory Contact.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data();
     return Contact(
       id: snapshot.id,
