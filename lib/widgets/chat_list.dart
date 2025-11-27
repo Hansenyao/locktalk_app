@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:locktalk_app/models/message.dart';
+import 'package:locktalk_app/widgets/locked_msg_dlg.dart';
 
 class ChatList extends StatelessWidget {
   final String chatId;
@@ -12,12 +13,26 @@ class ChatList extends StatelessWidget {
     required this.currentUserId,
   });
 
+  // Convert Timestamp to string
   String _formatTimestamp(Timestamp? ts) {
     if (ts == null) return '';
     final dt = ts.toDate();
     final hour = dt.hour.toString().padLeft(2, '0');
     final min = dt.minute.toString().padLeft(2, '0');
     return '$hour:$min';
+  }
+
+  // Show decrypt cihoertext dialog
+  void _showPinDialog(BuildContext context, Message msg) {
+    LockedMsgDlg.show(
+      context,
+      message: msg,
+      onSubmit: (pin) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("你输入的 PIN 是：$pin")));
+      },
+    );
   }
 
   @override
@@ -61,17 +76,19 @@ class ChatList extends StatelessWidget {
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.blueAccent : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      msg.content,
-                      style: TextStyle(
-                        color: isMe ? Colors.white : Colors.black,
+                  // 🔥 仅密文允许点击
+                  InkWell(
+                    onTap: msg.encrypted
+                        ? () => _showPinDialog(context, msg)
+                        : null,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isMe ? Colors.blueAccent : Colors.grey[400],
+                        borderRadius: BorderRadius.circular(8),
                       ),
+                      child: MessageItemWidget(isMe: isMe, msg: msg),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -86,5 +103,36 @@ class ChatList extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class MessageItemWidget extends StatelessWidget {
+  final Message msg;
+  final bool isMe;
+
+  const MessageItemWidget({super.key, required this.msg, required this.isMe});
+
+  @override
+  Widget build(BuildContext context) {
+    return msg.encrypted
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.lock,
+                size: 16,
+                color: isMe ? Colors.white : Colors.black,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                "Encrypted Message",
+                style: TextStyle(color: isMe ? Colors.white : Colors.black),
+              ),
+            ],
+          )
+        : Text(
+            msg.content,
+            style: TextStyle(color: isMe ? Colors.white : Colors.black),
+          );
   }
 }
