@@ -26,7 +26,9 @@ class _LockedMsgDlgState extends State<LockedMsgDlg> {
   late final String _cipherB64;
   String? _decryptedText;
   bool _isDecrypting = false;
+  bool _isSuccess = false;
 
+  // Decrypt a locked message
   Future<void> _handleDecrypt() async {
     final pin = _pinCtrl.text.trim();
     if (pin.isEmpty) return;
@@ -47,11 +49,14 @@ class _LockedMsgDlgState extends State<LockedMsgDlg> {
       setState(() {
         _decryptedText = msg;
         _isDecrypting = false;
+        _isSuccess = true;
       });
     } catch (e) {
+      // Update UI with error message
       setState(() {
-        _decryptedText = e.toString();
+        _decryptedText = "Invalid PIN";
         _isDecrypting = false;
+        _isSuccess = false;
       });
     }
   }
@@ -69,53 +74,24 @@ class _LockedMsgDlgState extends State<LockedMsgDlg> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("Locked Message"),
+      title: TitleBar(),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 第一行：PIN + OK
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _pinCtrl,
-                  obscureText: true,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    labelText: "Input PIN",
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
+          // Pin input area
+          PinInputField(pinCtrl: _pinCtrl),
           const SizedBox(height: 16),
 
-          // 第二行：解密后的消息显示（支持滚动）
+          // Show decrypted message
           if (_decryptedText != null)
-            Container(
-              constraints: const BoxConstraints(
-                maxHeight: 200, // 可根据需要调节显示区域大小
-              ),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.grey[100],
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: SingleChildScrollView(
-                child: Text(
-                  _decryptedText!,
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
+            DecryptedMsgField(
+              decryptedText: _decryptedText,
+              isSuccess: _isSuccess,
             ),
+          const SizedBox(height: 16),
 
-          if (_decryptedText != null) const SizedBox(height: 16),
-
-          // 第三行：Close 按钮
+          // Read button
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -130,14 +106,95 @@ class _LockedMsgDlgState extends State<LockedMsgDlg> {
                       )
                     : const Text("Read"),
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text("OK"),
-              ),
             ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class DecryptedMsgField extends StatelessWidget {
+  const DecryptedMsgField({
+    super.key,
+    required String? decryptedText,
+    required bool isSuccess,
+  }) : _decryptedText = decryptedText,
+       _isSuccess = isSuccess;
+
+  final String? _decryptedText;
+  final bool _isSuccess;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: Container(
+        constraints: const BoxConstraints(maxHeight: 80),
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.grey[100],
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(0),
+        ),
+        child: SingleChildScrollView(
+          child: Text(
+            _decryptedText!,
+            style: TextStyle(
+              fontSize: 14,
+              color: _isSuccess ? Colors.black87 : Colors.red,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PinInputField extends StatelessWidget {
+  const PinInputField({super.key, required TextEditingController pinCtrl})
+    : _pinCtrl = pinCtrl;
+
+  final TextEditingController _pinCtrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: TextField(
+            controller: _pinCtrl,
+            obscureText: true,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: "Input PIN",
+              border: OutlineInputBorder(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class TitleBar extends StatelessWidget {
+  const TitleBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Text(
+          "Locked Message",
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        const Spacer(),
+        IconButton(
+          icon: const Icon(Icons.close),
+          splashRadius: 18,
+          onPressed: () => Navigator.pop(context),
+        ),
+      ],
     );
   }
 }
