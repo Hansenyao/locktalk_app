@@ -36,8 +36,9 @@ class _SignupPageState extends State<SignupPage> {
     if (_formKey.currentState!.validate()) {
       try {
         // Create keypair for user
-        var keyPair = KeyPair.generateFromSeed(_pinController.text);
-        var pubBase64 = keyPair.getPublicKey();
+        final pin = _pinController.text;
+        final keyPair = KeyPair.generateFromSeed(pin);
+        final pubBase64 = keyPair.getPublicKey();
 
         // Register account on firebase
         User? user = await signUp(

@@ -24,15 +24,7 @@ class ChatList extends StatelessWidget {
 
   // Show decrypt cihoertext dialog
   void _showPinDialog(BuildContext context, Message msg) {
-    LockedMsgDlg.show(
-      context,
-      message: msg,
-      onSubmit: (pin) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("你输入的 PIN 是：$pin")));
-      },
-    );
+    LockedMsgDlg.show(context, message: msg);
   }
 
   @override

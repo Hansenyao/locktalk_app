@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:pointycastle/export.dart';
 
-final Uint8List GCM_IV = Uint8List.fromList([
+final Uint8List AES_IV = Uint8List.fromList([
   0,
   0,
   0,
@@ -20,15 +20,37 @@ final Uint8List GCM_IV = Uint8List.fromList([
   0,
 ]);
 
-Uint8List aesEncrypt(Uint8List key, Uint8List data) {
-  final cipher = PaddedBlockCipherImpl(PKCS7Padding(), AESFastEngine());
-  cipher.init(true, PaddedBlockCipherParameters(KeyParameter(key), null));
+Uint8List aesCbcEncrypt(Uint8List key, Uint8List data) {
+  final cipher = PaddedBlockCipherImpl(
+    PKCS7Padding(),
+    CBCBlockCipher(AESFastEngine()),
+  );
+
+  cipher.init(
+    true,
+    PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
+      ParametersWithIV<KeyParameter>(KeyParameter(key), AES_IV),
+      null,
+    ),
+  );
+
   return cipher.process(data);
 }
 
-Uint8List aesDecrypt(Uint8List key, Uint8List encrypted) {
-  final cipher = PaddedBlockCipherImpl(PKCS7Padding(), AESFastEngine());
-  cipher.init(false, PaddedBlockCipherParameters(KeyParameter(key), null));
+Uint8List aesCbcDecrypt(Uint8List key, Uint8List encrypted) {
+  final cipher = PaddedBlockCipherImpl(
+    PKCS7Padding(),
+    CBCBlockCipher(AESFastEngine()),
+  );
+
+  cipher.init(
+    false,
+    PaddedBlockCipherParameters<ParametersWithIV<KeyParameter>, Null>(
+      ParametersWithIV<KeyParameter>(KeyParameter(key), AES_IV),
+      null,
+    ),
+  );
+
   return cipher.process(encrypted);
 }
 
@@ -38,7 +60,7 @@ Uint8List aesGcmEncrypt(Uint8List plaintext, Uint8List key) {
   final params = AEADParameters(
     KeyParameter(key),
     128, // tag length
-    GCM_IV,
+    AES_IV,
     Uint8List(0),
   );
 
@@ -49,7 +71,7 @@ Uint8List aesGcmEncrypt(Uint8List plaintext, Uint8List key) {
 Uint8List aesGcmDecrypt(Uint8List ciphertext, Uint8List key) {
   final cipher = GCMBlockCipher(AESEngine());
 
-  final params = AEADParameters(KeyParameter(key), 128, GCM_IV, Uint8List(0));
+  final params = AEADParameters(KeyParameter(key), 128, AES_IV, Uint8List(0));
 
   cipher.init(false, params);
   return cipher.process(ciphertext);

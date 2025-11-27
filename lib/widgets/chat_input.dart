@@ -25,17 +25,14 @@ class ChatInput extends StatefulWidget {
 
 class _MessageInputState extends State<ChatInput> {
   final TextEditingController _controller = TextEditingController();
+  late final String _ephemeralPubKey;
   late final Uint8List _shareSecert;
   bool _encrypt = false;
-
-  String _simpleEncrypt(String input) {
-    return input.split('').reversed.join(); // simple demo encryption
-  }
 
   // Use _shareSecert to encrypt an input message
   String _encryptMessage(String input) {
     final data = Uint8List.fromList(utf8.encode(input));
-    final cipher = aesEncrypt(_shareSecert, data);
+    final cipher = aesCbcEncrypt(_shareSecert, data);
     final b64 = base64.encode(cipher);
     return b64;
   }
@@ -46,6 +43,7 @@ class _MessageInputState extends State<ChatInput> {
 
     // Derive a shared secret to encrypt message for this session
     final ephemeralKeyPair = KeyPair.generate();
+    _ephemeralPubKey = ephemeralKeyPair.getPublicKey();
     _shareSecert = ephemeralKeyPair.deriveSharedSecret(widget.peer.pubkey);
   }
 
@@ -103,7 +101,7 @@ class _MessageInputState extends State<ChatInput> {
                   String msgText = text;
 
                   if (_encrypt) {
-                    msgText = '${widget.peer.pubkey}|${_encryptMessage(text)}';
+                    msgText = '$_ephemeralPubKey|${_encryptMessage(text)}';
                   }
 
                   // Construct a Message object
