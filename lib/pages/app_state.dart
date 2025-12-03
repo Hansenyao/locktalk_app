@@ -34,16 +34,6 @@ class ApplicationState extends ChangeNotifier {
     FirebaseFirestore.instance.collection('/contacts/').add(contact.toMap());
   }
 
-  Future<List<Contact>> getContacts() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('/contacts/')
-        .get();
-
-    final contacts = snapshot.docs.map((doc) => Contact.fromMap(doc)).toList();
-
-    return contacts;
-  }
-
   void _fetchContacts() async {
     _contactsLoading = true;
     notifyListeners();

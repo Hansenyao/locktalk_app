@@ -1,12 +1,102 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 import 'package:locktalk_app/pages/app_state.dart';
+import 'package:locktalk_app/firebase_functions.dart';
+import 'package:locktalk_app/pages/chat_page.dart';
 
-class MessageView extends StatelessWidget {
+class MessageView extends StatefulWidget {
   const MessageView({super.key});
 
   @override
+  State<MessageView> createState() => _MessageViewState();
+}
+
+class _MessageViewState extends State<MessageView> {
+  bool loading = true;
+  List<Map<String, dynamic>> chatList = [];
+
+  Future<void> loadChats() async {
+    final userId = context.read<ApplicationState>().user!.uid;
+
+    // Step 1: load chats info
+    final chats = await fetchUserChats(userId);
+
+    // Step 2: load peer contact one by one
+    for (var chat in chats) {
+      // attach contact info
+      chat["peer"] = await fetchContactById(chat["peerId"]);
+      chat["unreadCount"] = await countUnreadMessages(chat["chatId"], userId);
+    }
+
+    setState(() {
+      chatList = chats;
+      loading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadChats();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(alignment: Alignment.center, child: Text("Message List"));
+    if (loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (chatList.isEmpty) {
+      return const Center(child: Text("No messages"));
+    }
+
+    return ListView.builder(
+      itemCount: chatList.length,
+      itemBuilder: (context, index) {
+        final chat = chatList[index];
+        final peer = chat["peer"];
+        final unread = chat["unreadCount"] ?? 0;
+
+        // Format the last message time
+        final lastTime = chat["lastMessageTime"];
+        String timeStr = "";
+        if (lastTime != null) {
+          timeStr = lastTime.toString().substring(0, 16);
+        }
+
+        return ListTile(
+          // Title: name (emaill)
+          title: Text(
+            peer != null ? "${peer.name} (${peer.email})" : chat["peerId"],
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          // Subtitle: the last message time
+          subtitle: Text(
+            "The last message sent at: $timeStr",
+            style: const TextStyle(fontSize: 13),
+          ),
+          // Unread message counts
+          trailing: unread > 0
+              ? Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    unread.toString(),
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                )
+              : null,
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatPage(peer: peer)),
+            );
+          },
+        );
+      },
+    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:locktalk_app/pages/routes.dart' as routes;
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -27,7 +28,9 @@ class LoginPage extends StatelessWidget {
 
           // Clear the navigation stack and (can't go back to sign in page),
           // and go to the home page
-          Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+          Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil(routes.homeRoute, (route) => false);
         }),
       ],
     );

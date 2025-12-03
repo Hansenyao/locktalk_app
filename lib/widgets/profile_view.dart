@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:locktalk_app/pages/app_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:locktalk_app/pages/routes.dart' as routes;
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -11,7 +12,11 @@ class ProfileView extends StatelessWidget {
     await FirebaseAuth.instance.signOut();
 
     // Clear the navigation stack and jump to sign in page
-    Navigator.pushNamedAndRemoveUntil(context, '/signin', (route) => false);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      routes.signInRoute,
+      (route) => false,
+    );
   }
 
   @override

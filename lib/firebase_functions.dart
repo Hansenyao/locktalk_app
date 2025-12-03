@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:locktalk_app/models/contact.dart';
 
+/// Sign Up: Create a new Contact in Firestore
 Future<User?> signUp(String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance
@@ -29,6 +32,7 @@ Future<User?> signUp(String email, String password) async {
   }
 }
 
+/// Sign In
 Future<User?> signIn(String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance
@@ -47,4 +51,60 @@ Future<User?> signIn(String email, String password) async {
   } catch (e) {
     throw Exception(e);
   }
+}
+
+// Get a contact by id
+Future<Contact?> fetchContactById(String userId) async {
+  final query = await FirebaseFirestore.instance
+      .collection('contacts')
+      .where('userId', isEqualTo: userId)
+      .limit(1)
+      .get();
+
+  if (query.docs.isEmpty) return null;
+
+  final doc = query.docs.first;
+  return Contact.fromMap(doc);
+}
+
+// Get chats list by userId
+Future<List<Map<String, dynamic>>> fetchUserChats(String userId) async {
+  final query = await FirebaseFirestore.instance
+      .collection('chats')
+      .where('participants', arrayContains: userId)
+      .get();
+
+  List<Map<String, dynamic>> result = [];
+
+  for (var doc in query.docs) {
+    final chatId = doc.id;
+
+    // Parse peerId from chatId
+    final parts = chatId.split("-");
+    final peerId = parts[0] == userId ? parts[1] : parts[0];
+
+    // Last message info
+    final data = doc.data();
+    result.add({
+      "chatId": chatId,
+      "peerId": peerId,
+      "lastMessageText": data["lastMessageText"],
+      "lastMessageTime": data["lastMessageTime"]?.toDate(),
+    });
+  }
+
+  return result;
+}
+
+// Get the count of unread messages in a chat
+Future<int> countUnreadMessages(String chatId, String myId) async {
+  final query = await FirebaseFirestore.instance
+      .collection("chats")
+      .doc(chatId)
+      .collection("messages")
+      .where("receiverId", isEqualTo: myId)
+      .where("read", isEqualTo: false)
+      .get();
+
+  return query.docs.length;
 }
