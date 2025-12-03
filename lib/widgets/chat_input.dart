@@ -114,12 +114,27 @@ class _MessageInputState extends State<ChatInput> {
                     read: false,
                   );
 
-                  // Send message to Firestore
-                  await FirebaseFirestore.instance
+                  /* Send message to Firestore */
+                  // Get doc path
+                  final chatDoc = FirebaseFirestore.instance
                       .collection('chats')
-                      .doc(widget.chatId)
-                      .collection('messages')
-                      .add(sendMessage.toMap());
+                      .doc(widget.chatId);
+
+                  // Save participants to doc
+                  await chatDoc.set({
+                    'participants': [widget.currentUserId, widget.peer.userId],
+                    'updatedAt': FieldValue.serverTimestamp(),
+                  }, SetOptions(merge: true));
+
+                  // Save message
+                  await chatDoc.collection('messages').add(sendMessage.toMap());
+
+                  // Update the last message
+                  await chatDoc.update({
+                    'lastMessageText': sendMessage.content,
+                    'lastMessageTime': FieldValue.serverTimestamp(),
+                    'lastMessageSender': widget.currentUserId,
+                  });
 
                   _controller.clear();
                 },
