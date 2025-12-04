@@ -1,10 +1,8 @@
 import 'package:locktalk_app/firebase_options.dart';
-import 'package:locktalk_app/models/contact.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ApplicationState extends ChangeNotifier {
   ApplicationState() {
@@ -25,29 +23,6 @@ class ApplicationState extends ChangeNotifier {
     _user = user;
   }
 
-  List<Contact>? _contacts;
-  List<Contact>? get contacts => _contacts;
-  bool _contactsLoading = false;
-  bool get contactsLoading => _contactsLoading;
-
-  void addContact(contact) {
-    FirebaseFirestore.instance.collection('/contacts/').add(contact.toMap());
-  }
-
-  void _fetchContacts() async {
-    _contactsLoading = true;
-    notifyListeners();
-
-    final snapshot = await FirebaseFirestore.instance
-        .collection('/contacts/')
-        .get();
-
-    _contacts = snapshot.docs.map((doc) => Contact.fromMap(doc)).toList();
-
-    _contactsLoading = false;
-    notifyListeners();
-  }
-
   void init() async {
     // Connect to firebase
     await Firebase.initializeApp(
@@ -63,8 +38,6 @@ class ApplicationState extends ChangeNotifier {
       if (user != null) {
         _loggedIn = true;
         this.user = user;
-
-        _fetchContacts();
       } else {
         _loggedIn = false;
       }

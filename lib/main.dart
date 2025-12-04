@@ -29,8 +29,7 @@ class MainApp extends StatelessWidget {
       home: AppEntryPoint(),
       routes: {
         routes.signInRoute: (context) => SigninPage(),
-        routes.signUpRoute: (context) =>
-            SignupPage(appState: context.read<ApplicationState>()),
+        routes.signUpRoute: (context) => SignupPage(),
       },
     );
   }

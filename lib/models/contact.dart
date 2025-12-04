@@ -21,9 +21,9 @@ class Contact {
     return Contact(
       id: snapshot.id,
       userId: data!['userId'],
-      name: data!['name'],
-      email: data!['email'],
-      pubkey: data!['pubkey'],
+      name: data['name'],
+      email: data['email'],
+      pubkey: data['pubkey'],
     );
   }
 

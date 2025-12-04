@@ -25,11 +25,11 @@ class Message {
     return Message(
       id: snapshot.id,
       senderId: data!['senderId'],
-      receiverId: data!['receiverId'],
-      timestamp: data!['timestamp'],
-      content: data!['content'],
-      encrypted: data!['encrypted'],
-      read: data!['read'],
+      receiverId: data['receiverId'],
+      timestamp: data['timestamp'],
+      content: data['content'],
+      encrypted: data['encrypted'],
+      read: data['read'],
     );
   }
 

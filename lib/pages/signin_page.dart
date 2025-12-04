@@ -29,7 +29,7 @@ class _SigninPageState extends State<SigninPage> {
   void handleSignIn(BuildContext context) async {
     if (_formKey.currentState!.validate()) {
       try {
-        User? user = await signIn(
+        User? user = await firebase_signIn(
           _emailController.text,
           _passwordController.text,
         );

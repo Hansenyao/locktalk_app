@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:locktalk_app/models/contact.dart';
 
 /// Sign Up: Create a new Contact in Firestore
-Future<User?> signUp(String email, String password) async {
+Future<User?> firebaseSignUp(String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
@@ -33,7 +33,7 @@ Future<User?> signUp(String email, String password) async {
 }
 
 /// Sign In
-Future<User?> signIn(String email, String password) async {
+Future<User?> firebaseSignIn(String email, String password) async {
   try {
     UserCredential userCredential = await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email, password: password);
@@ -53,8 +53,26 @@ Future<User?> signIn(String email, String password) async {
   }
 }
 
+// Add a new contact
+void firebaseAddContact(contact) async {
+  await FirebaseFirestore.instance
+      .collection('/contacts/')
+      .add(contact.toMap());
+}
+
+// Get all contacts
+Future<List<Contact>?> firebaseFetchContacts(String? excludeId) async {
+  final query = await FirebaseFirestore.instance
+      .collection('contacts')
+      .where('userId', isNotEqualTo: excludeId)
+      .get();
+
+  if (query.docs.isEmpty) return null;
+  return query.docs.map((doc) => Contact.fromMap(doc)).toList();
+}
+
 // Get a contact by id
-Future<Contact?> fetchContactById(String userId) async {
+Future<Contact?> firebaseFetchContactById(String userId) async {
   final query = await FirebaseFirestore.instance
       .collection('contacts')
       .where('userId', isEqualTo: userId)
@@ -68,7 +86,7 @@ Future<Contact?> fetchContactById(String userId) async {
 }
 
 // Get chats list by userId
-Future<List<Map<String, dynamic>>> fetchUserChats(String userId) async {
+Future<List<Map<String, dynamic>>> firebaseFetchUserChats(String userId) async {
   final query = await FirebaseFirestore.instance
       .collection('chats')
       .where('participants', arrayContains: userId)
@@ -97,7 +115,7 @@ Future<List<Map<String, dynamic>>> fetchUserChats(String userId) async {
 }
 
 // Get the count of unread messages in a chat
-Future<int> countUnreadMessages(String chatId, String myId) async {
+Future<int> firebaseCountUnreadMessages(String chatId, String myId) async {
   final query = await FirebaseFirestore.instance
       .collection("chats")
       .doc(chatId)

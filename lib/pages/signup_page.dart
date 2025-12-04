@@ -4,12 +4,9 @@ import 'package:locktalk_app/crypto/ecc.dart';
 import 'package:locktalk_app/models/contact.dart';
 import 'package:locktalk_app/pages/routes.dart' as routes;
 import 'package:locktalk_app/firebase_functions.dart';
-import 'package:locktalk_app/pages/app_state.dart';
 
 class SignupPage extends StatefulWidget {
-  const SignupPage({super.key, required this.appState});
-
-  final ApplicationState appState;
+  const SignupPage({super.key});
 
   @override
   State<SignupPage> createState() => _SignupPageState();
@@ -41,7 +38,7 @@ class _SignupPageState extends State<SignupPage> {
         final pubBase64 = keyPair.getPublicKey();
 
         // Register account on firebase
-        User? user = await signUp(
+        User? user = await firebaseSignUp(
           _emailController.text,
           _passwordController.text,
         );
@@ -56,7 +53,9 @@ class _SignupPageState extends State<SignupPage> {
             email: user.email!,
             pubkey: pubBase64,
           );
-          widget.appState.addContact(newContact);
+
+          // Add new contact to firebase
+          firebaseAddContact(newContact);
 
           // Navigate to home page
           Navigator.pushReplacementNamed(context, routes.homeRoute);

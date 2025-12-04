@@ -19,13 +19,16 @@ class _MessageViewState extends State<MessageView> {
     final userId = context.read<ApplicationState>().user!.uid;
 
     // Step 1: load chats info
-    final chats = await fetchUserChats(userId);
+    final chats = await firebaseFetchUserChats(userId);
 
     // Step 2: load peer contact one by one
     for (var chat in chats) {
       // attach contact info
-      chat["peer"] = await fetchContactById(chat["peerId"]);
-      chat["unreadCount"] = await countUnreadMessages(chat["chatId"], userId);
+      chat["peer"] = await firebaseFetchContactById(chat["peerId"]);
+      chat["unreadCount"] = await firebaseCountUnreadMessages(
+        chat["chatId"],
+        userId,
+      );
     }
 
     setState(() {
