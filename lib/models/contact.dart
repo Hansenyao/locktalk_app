@@ -6,6 +6,7 @@ class Contact {
   String name;
   String email;
   String pubkey;
+  String? avatarUrl;
 
   // Constructor
   Contact({
@@ -14,6 +15,7 @@ class Contact {
     required this.name,
     required this.email,
     required this.pubkey,
+    this.avatarUrl,
   });
 
   factory Contact.fromMap(DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -24,10 +26,17 @@ class Contact {
       name: data['name'],
       email: data['email'],
       pubkey: data['pubkey'],
+      avatarUrl: data['avatarUrl'],
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {'userId': userId, 'name': name, "email": email, "pubkey": pubkey};
+    return {
+      'userId': userId,
+      'name': name,
+      'email': email,
+      'pubkey': pubkey,
+      'avatarUrl': avatarUrl,
+    };
   }
 }

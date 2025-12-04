@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:locktalk_app/models/contact.dart';
 
@@ -125,4 +127,20 @@ Future<int> firebaseCountUnreadMessages(String chatId, String myId) async {
       .get();
 
   return query.docs.length;
+}
+
+// Upload the avatar image file
+Future<String?> firebaseUploadAvatar(File imageFile, String userId) async {
+  try {
+    final ref = FirebaseStorage.instance
+        .ref()
+        .child('avatars')
+        .child('$userId.jpg');
+
+    await ref.putFile(imageFile);
+    final url = await ref.getDownloadURL();
+    return url;
+  } catch (e) {
+    throw Exception(e);
+  }
 }

@@ -31,6 +31,8 @@ class _MessageViewState extends State<MessageView> {
       );
     }
 
+    if (!mounted) return;
+
     setState(() {
       chatList = chats;
       loading = false;

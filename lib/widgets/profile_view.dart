@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:locktalk_app/pages/app_state.dart';
+import 'package:locktalk_app/widgets/avatar_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locktalk_app/pages/routes.dart' as routes;
 
@@ -22,6 +24,7 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.read<ApplicationState>();
+    File? _avatarFile;
 
     return Container(
       alignment: Alignment.topCenter,
@@ -29,9 +32,16 @@ class ProfileView extends StatelessWidget {
         children: [
           /* Profile Area */
           Container(
-            margin: EdgeInsets.only(top: 200, bottom: 10),
+            margin: EdgeInsets.only(top: 50, bottom: 10),
             child: Column(
               children: [
+                AvatarPicker(
+                  initialUrl: null,
+                  onImagePicked: (file) {
+                    _avatarFile = file;
+                  },
+                ),
+                SizedBox(height: 20),
                 Text(appState.user?.displayName ?? "Unknown Name"),
                 SizedBox(height: 20),
                 Text(appState.user?.email ?? "Unknown Email"),
