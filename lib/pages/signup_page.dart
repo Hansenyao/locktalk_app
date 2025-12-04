@@ -6,6 +6,7 @@ import 'package:locktalk_app/models/contact.dart';
 import 'package:locktalk_app/widgets/avatar_picker.dart';
 import 'package:locktalk_app/pages/routes.dart' as routes;
 import 'package:locktalk_app/firebase_functions.dart';
+import 'package:locktalk_app/widgets/app_title_bar.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -85,7 +86,8 @@ class _SignupPageState extends State<SignupPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Create Account'), centerTitle: true),
+      backgroundColor: const Color(0xFFF6F6F6),
+      appBar: AppTitleBar(title: 'Create Your Account'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(

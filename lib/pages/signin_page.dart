@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locktalk_app/pages/routes.dart' as routes;
 import 'package:locktalk_app/firebase_functions.dart';
+import 'package:locktalk_app/widgets/app_title_bar.dart';
 
 class SigninPage extends StatefulWidget {
   const SigninPage({super.key});
@@ -50,7 +51,8 @@ class _SigninPageState extends State<SigninPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign In'), centerTitle: true),
+      backgroundColor: const Color(0xFFF6F6F6),
+      appBar: AppTitleBar(title: 'Welcome'),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Form(

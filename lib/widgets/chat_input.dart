@@ -51,7 +51,7 @@ class _MessageInputState extends State<ChatInput> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(top: 5, left: 10, right: 10, bottom: 40),
-      color: Colors.grey[100],
+      color: Colors.white,
 
       child: Column(
         mainAxisSize: MainAxisSize.min,

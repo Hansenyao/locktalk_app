@@ -4,6 +4,7 @@ import 'package:locktalk_app/models/contact.dart';
 import 'package:locktalk_app/pages/app_state.dart';
 import 'package:locktalk_app/widgets/chat_input.dart';
 import 'package:locktalk_app/widgets/chat_list.dart';
+import 'package:locktalk_app/widgets/app_title_bar.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key, required this.peer});
@@ -24,7 +25,8 @@ class ChatPage extends StatelessWidget {
     final chatId = getChatId(currentUser.uid, peer.userId);
 
     return Scaffold(
-      appBar: AppBar(title: Text(peer.name), centerTitle: true),
+      backgroundColor: const Color(0xFFF6F6F6),
+      appBar: AppTitleBar(title: peer.name),
       body: Column(
         children: [
           // Chat history
