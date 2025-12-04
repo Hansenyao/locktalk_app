@@ -20,6 +20,7 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final appState = context.read<ApplicationState>();
     final currentUser = appState.user!;
+    final me = appState.userInfo!;
     final chatId = getChatId(currentUser.uid, peer.userId);
 
     return Scaffold(
@@ -28,11 +29,11 @@ class ChatPage extends StatelessWidget {
         children: [
           // Chat history
           Expanded(
-            child: ChatList(chatId: chatId, currentUserId: currentUser.uid),
+            child: ChatList(chatId: chatId, me: me, peer: peer),
           ),
 
           // Input area
-          ChatInput(chatId: chatId, currentUserId: currentUser.uid, peer: peer),
+          ChatInput(chatId: chatId, me: me, peer: peer),
         ],
       ),
     );

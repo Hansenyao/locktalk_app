@@ -70,6 +70,22 @@ class _MessageViewState extends State<MessageView> {
         }
 
         return ListTile(
+          // Avatar
+          leading: CircleAvatar(
+            radius: 20,
+            backgroundImage:
+                (peer != null &&
+                    peer.avatarUrl != null &&
+                    peer.avatarUrl!.isNotEmpty)
+                ? NetworkImage(peer.avatarUrl!)
+                : null,
+            child:
+                (peer == null ||
+                    peer.avatarUrl == null ||
+                    peer.avatarUrl!.isEmpty)
+                ? const Icon(Icons.person, size: 20)
+                : null,
+          ),
           // Title: name (emaill)
           title: Text(
             peer != null ? "${peer.name} (${peer.email})" : chat["peerId"],

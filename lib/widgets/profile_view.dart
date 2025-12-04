@@ -52,9 +52,8 @@ class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
     final appState = context.read<ApplicationState>();
-    final user = appState.user!;
-    final userInfo = appState.userInfo!;
-    String? avatarUrl = userInfo.avatarUrl;
+    final me = appState.userInfo!;
+    String? avatarUrl = me.avatarUrl;
 
     return Container(
       alignment: Alignment.topCenter,
@@ -70,7 +69,7 @@ class _ProfileViewState extends State<ProfileView> {
                   children: [
                     AvatarPicker(
                       initialUrl: avatarUrl,
-                      onImagePicked: (file) => _updateAvatar(file, userInfo),
+                      onImagePicked: (file) => _updateAvatar(file, me),
                     ),
 
                     // Uploading
@@ -92,9 +91,9 @@ class _ProfileViewState extends State<ProfileView> {
                   ],
                 ),
                 SizedBox(height: 20),
-                Text(user.displayName ?? "Unknown Name"),
+                Text(me.name),
                 SizedBox(height: 20),
-                Text(user.email ?? "Unknown Email"),
+                Text(me.email),
               ],
             ),
           ),

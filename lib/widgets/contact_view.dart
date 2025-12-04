@@ -65,7 +65,15 @@ class _ContactViewState extends State<ContactView> {
         final contact = contacts[index];
 
         return ListTile(
-          leading: CircleAvatar(child: Icon(Icons.person)),
+          leading: CircleAvatar(
+            backgroundImage:
+                (contact.avatarUrl != null && contact.avatarUrl!.isNotEmpty)
+                ? NetworkImage(contact.avatarUrl!)
+                : null,
+            child: (contact.avatarUrl == null || contact.avatarUrl!.isEmpty)
+                ? const Icon(Icons.person)
+                : null,
+          ),
           title: Text(contact.name),
           subtitle: Text(contact.email),
           trailing: const Icon(Icons.chevron_right),

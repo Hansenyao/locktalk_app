@@ -9,13 +9,13 @@ import 'package:locktalk_app/crypto/ecc.dart';
 
 class ChatInput extends StatefulWidget {
   final String chatId;
-  final String currentUserId;
+  final Contact me;
   final Contact peer;
 
   const ChatInput({
     super.key,
     required this.chatId,
-    required this.currentUserId,
+    required this.me,
     required this.peer,
   });
 
@@ -106,7 +106,7 @@ class _MessageInputState extends State<ChatInput> {
 
                   // Construct a Message object
                   final sendMessage = Message(
-                    senderId: widget.currentUserId,
+                    senderId: widget.me.userId,
                     receiverId: widget.peer.userId,
                     timestamp: Timestamp.now(),
                     content: msgText,
@@ -122,7 +122,7 @@ class _MessageInputState extends State<ChatInput> {
 
                   // Save participants to doc
                   await chatDoc.set({
-                    'participants': [widget.currentUserId, widget.peer.userId],
+                    'participants': [widget.me.userId, widget.peer.userId],
                     'updatedAt': FieldValue.serverTimestamp(),
                   }, SetOptions(merge: true));
 
@@ -133,7 +133,7 @@ class _MessageInputState extends State<ChatInput> {
                   await chatDoc.update({
                     'lastMessageText': sendMessage.content,
                     'lastMessageTime': FieldValue.serverTimestamp(),
-                    'lastMessageSender': widget.currentUserId,
+                    'lastMessageSender': widget.me.userId,
                   });
 
                   _controller.clear();
