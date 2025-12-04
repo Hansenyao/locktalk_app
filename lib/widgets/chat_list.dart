@@ -64,6 +64,16 @@ class ChatList extends StatelessWidget {
             final isMe = msg.senderId == me.userId;
             final avatarUrl = isMe ? me.avatarUrl : peer.avatarUrl;
 
+            // Set read = true
+            if (!isMe && !msg.read) {
+              FirebaseFirestore.instance
+                  .collection('chats')
+                  .doc(chatId)
+                  .collection('messages')
+                  .doc(msg.id)
+                  .update({'read': true});
+            }
+
             // CircleAvatar widget
             final avatarWidget = CircleAvatar(
               radius: 16,

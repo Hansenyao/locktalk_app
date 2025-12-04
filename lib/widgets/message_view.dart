@@ -114,7 +114,10 @@ class _MessageViewState extends State<MessageView> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ChatPage(peer: peer)),
-            );
+            ).then((_) {
+              // Refreash unread messsages number when back from ChatPage
+              loadChats();
+            });
           },
         );
       },
