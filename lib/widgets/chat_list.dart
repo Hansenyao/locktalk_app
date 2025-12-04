@@ -4,7 +4,7 @@ import 'package:locktalk_app/models/contact.dart';
 import 'package:locktalk_app/models/message.dart';
 import 'package:locktalk_app/widgets/locked_msg_dlg.dart';
 
-class ChatList extends StatelessWidget {
+class ChatList extends StatefulWidget {
   final String chatId;
   final Contact me;
   final Contact peer;
@@ -15,6 +15,13 @@ class ChatList extends StatelessWidget {
     required this.me,
     required this.peer,
   });
+
+  @override
+  State<ChatList> createState() => _ChatListState();
+}
+
+class _ChatListState extends State<ChatList> {
+  final ScrollController _scrollController = ScrollController();
 
   // Convert Timestamp to string
   String _formatTimestamp(Timestamp? ts) {
@@ -35,9 +42,9 @@ class ChatList extends StatelessWidget {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('chats')
-          .doc(chatId)
+          .doc(widget.chatId)
           .collection('messages')
-          .orderBy('timestamp', descending: true)
+          .orderBy('timestamp', descending: false)
           .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
@@ -52,88 +59,103 @@ class ChatList extends StatelessWidget {
               ),
             )
             .toList();
+
         if (messages.isEmpty) {
           return const Center(child: Text("No messages yet"));
         }
 
-        return ListView.builder(
-          reverse: true,
-          itemCount: messages.length,
-          itemBuilder: (context, index) {
-            final msg = messages[index];
-            final isMe = msg.senderId == me.userId;
-            final avatarUrl = isMe ? me.avatarUrl : peer.avatarUrl;
-
-            // Set read = true
-            if (!isMe && !msg.read) {
-              FirebaseFirestore.instance
-                  .collection('chats')
-                  .doc(chatId)
-                  .collection('messages')
-                  .doc(msg.id)
-                  .update({'read': true});
-            }
-
-            // CircleAvatar widget
-            final avatarWidget = CircleAvatar(
-              radius: 16,
-              backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
-                  ? NetworkImage(avatarUrl)
-                  : null,
-              child: (avatarUrl == null || avatarUrl.isEmpty)
-                  ? const Icon(Icons.person, size: 16)
-                  : null,
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.jumpTo(
+              _scrollController.position.maxScrollExtent,
             );
+          }
+        });
 
-            // Message column
-            final messageColumn = Column(
-              crossAxisAlignment: isMe
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: msg.encrypted
-                      ? () => _showPinDialog(context, msg)
-                      : null,
-                  borderRadius: BorderRadius.circular(8),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.blueAccent : Colors.grey[400],
-                      borderRadius: BorderRadius.circular(8),
+        return Scrollbar(
+          thumbVisibility: true,
+          child: ListView.builder(
+            //reverse: true,
+            controller: _scrollController,
+            itemCount: messages.length,
+            itemBuilder: (context, index) {
+              final msg = messages[index];
+              final isMe = msg.senderId == widget.me.userId;
+              final avatarUrl = isMe
+                  ? widget.me.avatarUrl
+                  : widget.peer.avatarUrl;
+
+              // Set read = true
+              if (!isMe && !msg.read) {
+                FirebaseFirestore.instance
+                    .collection('chats')
+                    .doc(widget.chatId)
+                    .collection('messages')
+                    .doc(msg.id)
+                    .update({'read': true});
+              }
+
+              // CircleAvatar widget
+              final avatarWidget = CircleAvatar(
+                radius: 16,
+                backgroundImage: (avatarUrl != null && avatarUrl.isNotEmpty)
+                    ? NetworkImage(avatarUrl)
+                    : null,
+                child: (avatarUrl == null || avatarUrl.isEmpty)
+                    ? const Icon(Icons.person, size: 16)
+                    : null,
+              );
+
+              // Message column
+              final messageColumn = Column(
+                crossAxisAlignment: isMe
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: msg.encrypted
+                        ? () => _showPinDialog(context, msg)
+                        : null,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: isMe ? Colors.blueAccent : Colors.grey[400],
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: MessageItemWidget(isMe: isMe, msg: msg),
                     ),
-                    child: MessageItemWidget(isMe: isMe, msg: msg),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _formatTimestamp(msg.timestamp),
-                  style: TextStyle(fontSize: 10, color: Colors.grey[600]),
-                ),
-              ],
-            );
+                  const SizedBox(height: 4),
+                  Text(
+                    _formatTimestamp(msg.timestamp),
+                    style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+                  ),
+                ],
+              );
 
-            return Container(
-              margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-              child: Row(
-                mainAxisAlignment: isMe
-                    ? MainAxisAlignment.end
-                    : MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: isMe
-                    ? [
-                        Flexible(child: messageColumn),
-                        const SizedBox(width: 8),
-                        avatarWidget,
-                      ]
-                    : [
-                        avatarWidget,
-                        const SizedBox(width: 8),
-                        Flexible(child: messageColumn),
-                      ],
-              ),
-            );
-          },
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                child: Row(
+                  mainAxisAlignment: isMe
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: isMe
+                      ? [
+                          Flexible(child: messageColumn),
+                          const SizedBox(width: 8),
+                          avatarWidget,
+                        ]
+                      : [
+                          avatarWidget,
+                          const SizedBox(width: 8),
+                          Flexible(child: messageColumn),
+                        ],
+                ),
+              );
+            },
+          ),
         );
       },
     );

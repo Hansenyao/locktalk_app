@@ -7,6 +7,20 @@ import 'package:locktalk_app/models/contact.dart';
 /// Sign Up: Create a new Contact in Firestore
 Future<User?> firebaseSignUp(String email, String password) async {
   try {
+    if (email.isEmpty) {
+      throw Exception('email must be provided');
+    }
+    if (password.isEmpty) {
+      throw Exception('password must be provided');
+    }
+
+    // Get display name from email address
+    final displayName = email.split('@').first;
+    if (displayName.isEmpty) {
+      throw Exception('invalid email address');
+    }
+
+    // Create a new user
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
 
@@ -14,7 +28,7 @@ Future<User?> firebaseSignUp(String email, String password) async {
 
     // Get display name from email
     if ((user?.displayName ?? '').isEmpty) {
-      await user?.updateDisplayName(user.email!.split('@').first);
+      await user?.updateDisplayName(displayName);
       await user?.reload();
 
       // Must get user from Firebase again, otherwise displayName is null still
