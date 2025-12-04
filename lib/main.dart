@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:locktalk_app/pages/routes.dart' as routes;
 import 'package:locktalk_app/pages/app_state.dart';
+import 'package:locktalk_app/pages/splash_screen.dart';
 import 'package:locktalk_app/pages/home_page.dart';
 import 'package:locktalk_app/pages/signup_page.dart';
 import 'package:locktalk_app/pages/signin_page.dart';
@@ -26,10 +27,12 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: AppEntryPoint(),
+      initialRoute: routes.splashRoute,
       routes: {
-        routes.signInRoute: (context) => SigninPage(),
-        routes.signUpRoute: (context) => SignupPage(),
+        routes.splashRoute: (context) => const SplashScreen(),
+        routes.homeRoute: (context) => AppEntryPoint(),
+        routes.signInRoute: (context) => const SigninPage(),
+        routes.signUpRoute: (context) => const SignupPage(),
       },
     );
   }

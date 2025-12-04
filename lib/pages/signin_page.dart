@@ -58,8 +58,10 @@ class _SigninPageState extends State<SigninPage> {
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // Logo
+              Image.asset('assets/images/logo.png', width: 180, height: 180),
+              SizedBox(height: 64),
               // Email
               TextFormField(
                 controller: _emailController,
