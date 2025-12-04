@@ -1,13 +1,41 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:locktalk_app/models/contact.dart';
 import 'package:provider/provider.dart';
 import 'package:locktalk_app/pages/app_state.dart';
 import 'package:locktalk_app/widgets/avatar_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:locktalk_app/pages/routes.dart' as routes;
+import 'package:locktalk_app/firebase_functions.dart';
 
-class ProfileView extends StatelessWidget {
+class ProfileView extends StatefulWidget {
   const ProfileView({super.key});
+
+  @override
+  State<ProfileView> createState() => _ProfileViewState();
+}
+
+class _ProfileViewState extends State<ProfileView> {
+  bool _isUploading = false;
+
+  Future<void> _updateAvatar(File? file, Contact contact) async {
+    if (file == null) return;
+
+    setState(() => _isUploading = true);
+
+    try {
+      // Upload avatar
+      final avatarUrl = await firebaseUploadAvatar(file, contact.userId);
+
+      // Update user contact information
+      contact.avatarUrl = avatarUrl;
+      await firebaseUpdateContactById(contact.id!, contact);
+    } catch (e) {
+      //showError(context, "Sign up error: ${e.toString()}");
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
+    }
+  }
 
   Future<void> _logout(BuildContext context) async {
     // Current user logout
@@ -24,7 +52,9 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appState = context.read<ApplicationState>();
-    File? _avatarFile;
+    final user = appState.user!;
+    final userInfo = appState.userInfo!;
+    String? avatarUrl = userInfo.avatarUrl;
 
     return Container(
       alignment: Alignment.topCenter,
@@ -35,16 +65,36 @@ class ProfileView extends StatelessWidget {
             margin: EdgeInsets.only(top: 50, bottom: 10),
             child: Column(
               children: [
-                AvatarPicker(
-                  initialUrl: null,
-                  onImagePicked: (file) {
-                    _avatarFile = file;
-                  },
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AvatarPicker(
+                      initialUrl: avatarUrl,
+                      onImagePicked: (file) => _updateAvatar(file, userInfo),
+                    ),
+
+                    // Uploading
+                    if (_isUploading)
+                      Container(
+                        width: 90,
+                        height: 90,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black54.withOpacity(0.4),
+                        ),
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            strokeWidth: 4,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
                 SizedBox(height: 20),
-                Text(appState.user?.displayName ?? "Unknown Name"),
+                Text(user.displayName ?? "Unknown Name"),
                 SizedBox(height: 20),
-                Text(appState.user?.email ?? "Unknown Email"),
+                Text(user.email ?? "Unknown Email"),
               ],
             ),
           ),

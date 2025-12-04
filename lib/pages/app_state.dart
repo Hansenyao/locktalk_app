@@ -1,8 +1,10 @@
+import 'package:locktalk_app/firebase_functions.dart';
 import 'package:locktalk_app/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
+import 'package:locktalk_app/models/contact.dart';
 
 class ApplicationState extends ChangeNotifier {
   ApplicationState() {
@@ -23,7 +25,10 @@ class ApplicationState extends ChangeNotifier {
     _user = user;
   }
 
-  void init() async {
+  Contact? _userInfo;
+  Contact? get userInfo => _userInfo;
+
+  Future<void> init() async {
     // Connect to firebase
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -33,11 +38,12 @@ class ApplicationState extends ChangeNotifier {
     FirebaseUIAuth.configureProviders([EmailAuthProvider()]);
 
     // Bind a listener
-    FirebaseAuth.instance.userChanges().listen((user) {
+    FirebaseAuth.instance.userChanges().listen((user) async {
       // when the user changes check if null and update loggedIn accordingly
       if (user != null) {
         _loggedIn = true;
         this.user = user;
+        _userInfo = await firebaseFetchContactById(user.uid);
       } else {
         _loggedIn = false;
       }

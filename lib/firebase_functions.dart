@@ -87,6 +87,14 @@ Future<Contact?> firebaseFetchContactById(String userId) async {
   return Contact.fromMap(doc);
 }
 
+// Update a contact information
+Future<void> firebaseUpdateContactById(String uid, Contact contact) async {
+  await FirebaseFirestore.instance
+      .collection('contacts')
+      .doc(uid)
+      .set(contact.toMap(), SetOptions(merge: true));
+}
+
 // Get chats list by userId
 Future<List<Map<String, dynamic>>> firebaseFetchUserChats(String userId) async {
   final query = await FirebaseFirestore.instance
@@ -138,8 +146,12 @@ Future<String?> firebaseUploadAvatar(File imageFile, String userId) async {
         .child('$userId.jpg');
 
     await ref.putFile(imageFile);
-    final url = await ref.getDownloadURL();
-    return url;
+    //final bytes = await imageFile.readAsBytes();
+    //final uploadTask = await ref.putData(
+    //  bytes,
+    //  SettableMetadata(contentType: 'image/jpeg'),
+    //);
+    return await ref.getDownloadURL();
   } catch (e) {
     throw Exception(e);
   }

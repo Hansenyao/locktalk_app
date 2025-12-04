@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:locktalk_app/crypto/ecc.dart';
 import 'package:locktalk_app/models/contact.dart';
 import 'package:locktalk_app/widgets/avatar_picker.dart';
