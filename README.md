@@ -86,13 +86,13 @@ You can build this project following below steps.
 - Clone this project code to your local
 
 ```
-    $ git clone https://github.com/NAIT-DMIT2504-Fall2025/project-Hansenyao.git
+    $ git clone https://github.com/Hansenyao/locktalk_app.git
 ```
 
 - Change current path to project folder
 
 ```
-    $ cd project-Hansenyao
+    $ cd locktalk_app
 ```
 
 - Use Visual Code to open project folder
