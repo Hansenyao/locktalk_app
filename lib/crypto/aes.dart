@@ -37,7 +37,7 @@ Uint8List aesCbcEncrypt(Uint8List key, Uint8List data) {
   return cipher.process(data);
 }
 
-Uint8List aesCbcDecrypt(Uint8List key, Uint8List encrypted) {
+Uint8List aesCbcDecrypt(Uint8List key, Uint8List cipherData) {
   final cipher = PaddedBlockCipherImpl(
     PKCS7Padding(),
     CBCBlockCipher(AESFastEngine()),
@@ -51,10 +51,10 @@ Uint8List aesCbcDecrypt(Uint8List key, Uint8List encrypted) {
     ),
   );
 
-  return cipher.process(encrypted);
+  return cipher.process(cipherData);
 }
 
-Uint8List aesGcmEncrypt(Uint8List plaintext, Uint8List key) {
+Uint8List aesGcmEncrypt(Uint8List key, Uint8List data) {
   final cipher = GCMBlockCipher(AESEngine());
 
   final params = AEADParameters(
@@ -65,14 +65,14 @@ Uint8List aesGcmEncrypt(Uint8List plaintext, Uint8List key) {
   );
 
   cipher.init(true, params);
-  return cipher.process(plaintext);
+  return cipher.process(data);
 }
 
-Uint8List aesGcmDecrypt(Uint8List ciphertext, Uint8List key) {
+Uint8List aesGcmDecrypt(Uint8List key, Uint8List cipherData) {
   final cipher = GCMBlockCipher(AESEngine());
 
   final params = AEADParameters(KeyParameter(key), 128, AES_IV, Uint8List(0));
 
   cipher.init(false, params);
-  return cipher.process(ciphertext);
+  return cipher.process(cipherData);
 }
