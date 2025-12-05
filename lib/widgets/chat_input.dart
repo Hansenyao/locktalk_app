@@ -62,6 +62,7 @@ class _MessageInputState extends State<ChatInput> {
             children: [
               const Text("PlainText"),
               Switch(
+                key: const Key('cipherSwitch'),
                 value: _encrypt,
                 onChanged: (v) {
                   setState(() {
@@ -81,6 +82,7 @@ class _MessageInputState extends State<ChatInput> {
               Expanded(
                 child: TextField(
                   controller: _controller,
+                  key: const Key('messageField'),
                   decoration: const InputDecoration(
                     hintText: "Type a message",
                     border: OutlineInputBorder(),

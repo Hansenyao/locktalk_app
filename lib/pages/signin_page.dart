@@ -65,6 +65,7 @@ class _SigninPageState extends State<SigninPage> {
               // Email
               TextFormField(
                 controller: _emailController,
+                key: const Key('emailField'),
                 decoration: InputDecoration(
                   labelText: "Email",
                   border: OutlineInputBorder(),
@@ -80,6 +81,7 @@ class _SigninPageState extends State<SigninPage> {
               // Password
               TextFormField(
                 controller: _passwordController,
+                key: const Key('passwordField'),
                 decoration: InputDecoration(
                   labelText: "Password",
                   border: OutlineInputBorder(),
