@@ -1,4 +1,4 @@
-# DMIT2504 - Project App Development: LockTalk App
+# LockTalk - A Security Chat App
 
 - This project is a mobile app development project of DMIT2504 - Mobile Application Development.
 
